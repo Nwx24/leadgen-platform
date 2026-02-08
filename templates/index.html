@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- The <head> contains page metadata and things the browser needs before rendering -->
+  <meta charset="UTF-8" />
+  <!-- This makes the page scale properly on phones/tablets -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Home Value Report</title>
+
+  <!-- Optional: link a CSS file for styling -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+  <main class="container">
+    <h1>Get a Free Home Value Report</h1>
+    <p>Fill this out and we’ll reach out shortly.</p>
+
+    <!-- If Flask passes an error message, show it -->
+    {% if error %}
+    <div class="error-box">
+        {{ error }}
+    </div>
+    {% endif %}
+
+
+    <!--
+      action="/submit" means: when the user clicks Submit, send the form data to /submit
+      method="POST" means: send data in the HTTP request body (not in the URL)
+      POST is used for "creating" something (like a lead submission)
+    -->
+    <form action="/submit" method="POST" class="lead-form">
+
+      <!--
+        The name attribute is SUPER important:
+        Flask reads this on the backend using request.form.get("name")
+      -->
+      <label for="name">Full Name *</label>
+      <input 
+        id="name" 
+        name="name" 
+        type="text" 
+        required
+        value="{{ form_data.name if form_data else '' }}"/>
+
+      <!-- required = browser will prevent empty submission
+           autocomplete helps users fill faster -->
+
+      <label for="email">Email *</label>
+      <input 
+        id="email" 
+        name="email" 
+        type="email" 
+        required
+        value="{{ form_data.email if form_data else '' }}"/>
+      <!-- type="email" gives basic email validation in the browser -->
+
+      <label for="phone">Phone</label>
+      <input 
+        id="phone" 
+        name="phone" 
+        type="tel"
+        value="{{ form_data.phone if form_data else '' }}"/>
+      <!-- type="tel" doesn’t validate much by itself; it’s mainly for mobile keyboards -->
+
+      <label for="buy_or_sell">Are you looking to buy or sell? *</label>
+      <select id="buy_or_sell" name="buy_or_sell" required>
+        <option value="">Select one</option>
+        <option value="buy"  {% if form_data and form_data.buy_or_sell=='buy' %}selected{% endif %}>Buy</option>
+        <option option value="sell" {% if form_data and form_data.buy_or_sell=='sell' %}selected{% endif %}>Sell</option>
+        <option value="both" {% if form_data and form_data.buy_or_sell=='both' %}selected{% endif %}>Both</option>
+        </select>
+
+      <!-- select ensures you get consistent values on the backend -->
+
+      <label for="timeline">Timeline *</label>
+      <select id="timeline" name="timeline" required>
+        <option value="">Select one</option>
+        <option value="0-3 months"  {% if form_data and form_data.timeline=='0-3 months' %}selected{% endif %}>0–3 months</option>
+        <option value="3-6 months"  {% if form_data and form_data.timeline=='3-6 months' %}selected{% endif %}>3–6 months</option>
+        <option value="6-12 months" {% if form_data and form_data.timeline=='6-12 months' %}selected{% endif %}>6–12 months</option>
+        <option value="12+ months"  {% if form_data and form_data.timeline=='12+ months' %}selected{% endif %}>12+ months</option>
+        </select>
+
+
+      <label for="message">Message</label>
+      <textarea 
+        id="message" 
+        name="message" 
+        rows="4">
+        {{ form_data.message if form_data else '' }}
+        </textarea>
+
+
+
+      <!-- When clicked, the browser submits the form to /submit -->
+      <button type="submit">Get My Report</button>
+
+      <p class="fineprint">
+        By submitting, you agree to be contacted about real estate services.
+      </p>
+    </form>
+  </main>
+</body>
+</html>
